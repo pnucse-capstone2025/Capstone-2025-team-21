@@ -80,7 +80,7 @@
   - **처리:** LangChain 파이프라인을 통해 (1)대화 내용 요약, (2)감정 흐름을 반영한 `DiaryPlan` 생성, (3)DiaryPlan을 바탕으로 최종 일기 텍스트 생성, (4)일기 톤에 맞는 음악 추천.
   - **출력:** 서사 구조를 갖춘 일기 텍스트, 추천 음악 정보(제목, 아티스트, YouTube 링크), 추천 앨범 표지.
 - **가족 연동 및 소셜 기능:**
-  - **입력:** 보호자의 시니어 전화번호 입력, 시니어의 연결 수락, 보호자의 사진/댓글 업로드.
+  - **입력:** 가족 사용자의 시니어 전화번호 입력, 시니어의 연결 수락, 가족의 사진/댓글 업로드.
   - **처리:** 다대다(N:M) 관계로 시니어와 가족 계정 연결. 공유된 앨범에 대한 CRUD(생성, 읽기, 수정, 삭제) 기능 수행.
   - **출력:** 연결된 가족에게 공유 앨범 표시, 앨범 내 사진 및 댓글 목록 표시.
 
@@ -113,13 +113,13 @@ Capstone-2025-team-21/
 │   │   └── ...                            # 기타 UI 컴포넌트들
 │   │
 │   ├── screens/                           # 화면 컴포넌트
-│   │   ├── Home.tsx                       # 메인 홈 화면
+│   │   ├── Home.tsx                       # 시니어 홈 화면
 │   │   ├── Chat.tsx                       # 채팅 화면
 │   │   ├── Conversation.tsx               # 대화 화면
 │   │   ├── Album.tsx                      # 앨범 목록
 │   │   ├── AlbumDetail.tsx                # 앨범 상세
 │   │   ├── Login.tsx                      # 로그인 화면
-│   │   ├── GuardianMain.tsx               # 보호자 메인
+│   │   ├── GuardianMain.tsx               # 가족 메인
 │   │   ├── DiaryResult.tsx                # 일기 결과
 │   │   └── ...                            # 기타 화면들
 │   │
@@ -133,7 +133,7 @@ Capstone-2025-team-21/
 │   │   ├── faceDetectionService.ts        # 얼굴 감지
 │   │   ├── faceRecognitionService.ts      # 얼굴 인식
 │   │   ├── kakaoAuthService.ts            # 카카오 인증
-│   │   ├── guardianService.ts             # 보호자 기능
+│   │   ├── guardianService.ts             # 가족 기능
 │   │   └── ...                            # 기타 서비스들
 │   │
 │   ├── contexts/                          # React Context 상태 관리
@@ -196,7 +196,7 @@ Capstone-2025-team-21/
 │       │   ├── GPTController.java
 │       │   └── GPTService.java
 │       │
-│       ├── guardian/                      # 보호자 기능
+│       ├── guardian/                      # 가족 기능
 │       │   └── GuardianSeniorRelationship.java
 │       │
 │       ├── microphone/                    # 마이크 기능
@@ -235,14 +235,7 @@ Capstone-2025-team-21/
 │           ├── UserEmotionAnalysisController.java
 │           └── CombineEmotionService.java
 │
-├── docs/                                  # 문서
-│   ├── 01.보고서/                         # 보고서
-│   ├── 02.포스터/                         # 포스터
-│   └── 03.발표자료/                       # 발표자료
-│
-├── install_and_build.sh                  # 설치 스크립트
-├── README.md                              # 프로젝트 설명서
-└── SAMPLE_README.md                       # README 샘플
+└──
 ```
 
 ### 4.4. 모델 파일 다운로드
