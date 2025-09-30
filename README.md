@@ -304,10 +304,10 @@ cd backend
 
 **4. AI 서비스 설정 및 실행**
 
-**KoBERT 서비스 (감정 분석)**
+**KLUE-BERT 서비스 (텍스트 감정 인식)**
 
 ```bash
-cd ai/kobert
+cd ai/klue-bert
 
 # 가상환경 생성 및 활성화
 python -m venv venv
@@ -410,7 +410,7 @@ google:
 # .env 파일 생성
 cd frontend
 echo "API_BASE_URL=http://localhost:8080" > .env
-echo "KOBERT_API_URL=http://localhost:8000" >> .env
+echo "KLUE_BERT_API_URL=http://localhost:8000" >> .env
 echo "YOLO_API_URL=http://localhost:8001" >> .env
 ```
 
@@ -420,7 +420,7 @@ echo "YOLO_API_URL=http://localhost:8001" >> .env
 # Backend 상태 확인
 curl http://localhost:8080/health
 
-# KoBERT 상태 확인
+# KLUE-BERT 상태 확인
 curl http://localhost:8000/health
 
 # YOLO 상태 확인
@@ -468,5 +468,4 @@ curl http://localhost:8001/health
 1. N. Majumder, S. Poria, D. Hazarika, R. Mihalcea, A. Gelbukh, and E. Cambria, "DialogueRNN: An Attentive RNN for Emotion Detection in Conversations," Proc. of the AAAI Conference on Artificial Intelligence, Vol. 33, pp. 6818-6825, 2019.
 2. W. Jiao, H. Yang, I. King, and M. R. Lyu, "HiGRU: Hierarchical Gated Recurrent Units for Utterance-level Emotion Recognition," Proc. of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT 2019), pp. 397-406, 2019.
 3. J. Devlin, M. Chang, K. Lee, and K. Toutanova, "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding," NAACL-HLT 2019, pp. 4171-4186, 2019.
-4. S. Park, J. Lee, et al., "KoBERT: A Pre-trained Korean BERT Model for Natural Language Processing," arXiv preprint arXiv:2008.03979, 2020.
 5. R. Ekman and W. V. Friesen, "Facial Action Coding System: A Technique for the Measurement of Facial Movement," Consulting Psychologists Press, 1978.
