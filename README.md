@@ -235,6 +235,11 @@ Capstone-2025-team-21/
 │           ├── UserEmotionAnalysisController.java
 │           └── CombineEmotionService.java
 │
+├── docs/                                  # 문서
+│   ├── 01.보고서/                         # 보고서
+│   ├── 02.포스터/                         # 포스터
+│   └── 03.발표자료/                       # 발표자료
+│
 └──
 ```
 
@@ -270,7 +275,7 @@ GitHub 파일 크기 제한으로 인해 학습된 모델 파일들은 별도로
 
 **배포 사이트**: [https://seniordigitalalbum.github.io/frontend_mobile/](https://seniordigitalalbum.github.io/frontend_mobile/)
 
-배포된 서비스는 모델 파일이 이미 설정되어 있어 별도 다운로드 없이 바로 이용할 수 있습니다.
+배포된 서비스는 모델 서버, 백엔드 서버, 데이터베이스 서버가 이미 설정되어 있어 아래 과정이 불필요 합니다.
 
 ### 5.2. 로컬 설치 및 실행 방법
 
@@ -476,7 +481,7 @@ npx expo start
 
 **참고**: AI 서비스 배포 URL은 실제 배포된 주소로 변경해주세요.
 
-#### Docker를 이용한 실행 (선택사항)
+### 5.3. Docker를 이용한 실행 (선택사항)
 
 **Backend Docker 실행**
 
@@ -494,7 +499,7 @@ docker build -t dearmind-yolo .
 docker run -p 8001:8001 dearmind-yolo
 ```
 
-#### 환경 설정
+### 5.4. 환경 설정
 
 **Backend 환경 변수 (application-local.yml)**
 
@@ -522,30 +527,26 @@ google:
   credentials-path: path/to/google-cloud-credentials.json
 ```
 
-**Frontend 환경 설정**
-
-```bash
-# .env 파일 생성
-cd frontend
-echo "API_BASE_URL=http://localhost:8080" > .env
-echo "KLUE_BERT_API_URL=http://localhost:8000" >> .env
-echo "YOLO_API_URL=http://localhost:8001" >> .env
-```
-
 **서비스 상태 확인**
 
 ```bash
 # Backend 상태 확인
 curl http://localhost:8080/health
 
-# KLUE-BERT 상태 확인
+# KLUE-BERT 상태 확인 (방법 1: 로컬)
 curl http://localhost:8000/health
 
-# YOLO 상태 확인
+# YOLO 상태 확인 (방법 1: 로컬)
 curl http://localhost:8001/health
+
+# KLUE-BERT 상태 확인 (방법 2: 배포된 서비스)
+curl http://35.202.26.247:8001/health
+
+# YOLO 상태 확인 (방법 2: 배포된 서비스)
+curl http://35.202.26.247:8000/health
 ```
 
-### 5.2. 오류 발생 시 해결 방법
+### 5.5. 오류 발생 시 해결 방법
 
 #### 일반적인 문제
 - **포트 충돌**: `netstat -ano | findstr :8080`으로 확인 후 `taskkill /PID <PID> /F`로 종료
