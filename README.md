@@ -87,159 +87,189 @@
 ### 4.3. 디렉토리 구조
 
 ```
-ai/
-├── klue-bert/                           # KLUE-BERT 기반 텍스트 감정 분석
-│   ├── main.py                          # FastAPI 서버
-│   ├── requirements.txt                 # Python 의존성
-│   ├── ctx_best.pt                      # 학습된 모델
+Capstone-2025-team-21/
+├── ai/                                    # AI 서비스
+│   ├── klue-bert/                         # KLUE-BERT 기반 텍스트 감정 분석
+│   │   ├── main.py                        # FastAPI 서버
+│   │   ├── requirements.txt               # Python 의존성
+│   │   └── ctx_best.pt                    # 모델 파일 (다운로드 필요)
+│   │
+│   └── yolo/                              # YOLO 기반 얼굴 감정 인식
+│       ├── main.py                        # FastAPI 서버
+│       ├── requirements.txt               # Python 의존성
+│       ├── best1.pt                       # 모델 파일 (다운로드 필요)
+│       └── best2.pt                       # 모델 파일 (다운로드 필요)
 │
-├── yolo/                                # YOLO 기반 얼굴 감정 인식
-│   ├── main.py                          # FastAPI 서버
-│   ├── requirements.txt                 # Python 의존성
-│   ├── best1.pt                         # 1차 모델 (joy/angry/sad/hurt/complex)
-│   ├── best2.pt                         # 2차 모델 (embarrassed/anxious)
-│   ├── Dockerfile                       # Docker 설정
+├── frontend_mobile/                       # React Native 프론트엔드
+│   ├── App.tsx                            # 앱 진입점
+│   ├── components/                        # 재사용 가능한 UI 컴포넌트
+│   │   ├── AICharacter.tsx                # AI 캐릭터 컴포넌트
+│   │   ├── AlbumCard.tsx                  # 앨범 카드
+│   │   ├── AlbumHero.tsx                  # 앨범 히어로 섹션
+│   │   ├── AlbumView.tsx                  # 앨범 뷰어
+│   │   ├── ChatBallon.tsx                 # 채팅 말풍선
+│   │   ├── ConversationFlow.tsx           # 대화 플로우
+│   │   ├── AnswerMic.tsx                  # 음성 답변 버튼
+│   │   └── ...                            # 기타 UI 컴포넌트들
+│   │
+│   ├── screens/                           # 화면 컴포넌트
+│   │   ├── Home.tsx                       # 메인 홈 화면
+│   │   ├── Chat.tsx                       # 채팅 화면
+│   │   ├── Conversation.tsx               # 대화 화면
+│   │   ├── Album.tsx                      # 앨범 목록
+│   │   ├── AlbumDetail.tsx                # 앨범 상세
+│   │   ├── Login.tsx                      # 로그인 화면
+│   │   ├── GuardianMain.tsx               # 보호자 메인
+│   │   ├── DiaryResult.tsx                # 일기 결과
+│   │   └── ...                            # 기타 화면들
+│   │
+│   ├── services/                          # 비즈니스 로직 서비스
+│   │   ├── api/                           # API 통신
+│   │   ├── audio/                         # 오디오 처리
+│   │   ├── cameraService.ts               # 카메라 서비스
+│   │   ├── conversationService.ts         # 대화 관리
+│   │   ├── diaryService.ts                # 일기 기능
+│   │   ├── emotionService.ts              # 감정 분석
+│   │   ├── faceDetectionService.ts        # 얼굴 감지
+│   │   ├── faceRecognitionService.ts      # 얼굴 인식
+│   │   ├── kakaoAuthService.ts            # 카카오 인증
+│   │   ├── guardianService.ts             # 보호자 기능
+│   │   └── ...                            # 기타 서비스들
+│   │
+│   ├── contexts/                          # React Context 상태 관리
+│   │   ├── UserContext.tsx                # 사용자 상태
+│   │   ├── ConversationContext.tsx        # 대화 상태
+│   │   └── DiaryContext.tsx               # 일기 상태
+│   │
+│   ├── hooks/                             # 커스텀 훅
+│   │   ├── useConversation.ts             # 대화 관련 훅
+│   │   ├── useCameraTest.ts               # 카메라 테스트
+│   │   ├── useMicrophoneTest.ts           # 마이크 테스트
+│   │   └── ...                            # 기타 커스텀 훅들
+│   │
+│   ├── types/                             # TypeScript 타입 정의
+│   ├── utils/                             # 유틸리티 함수
+│   │   ├── cameraUtils.ts                 # 카메라 유틸리티
+│   │   ├── conversationUtils.ts           # 대화 유틸리티
+│   │   ├── microphoneTestUtils.ts         # 마이크 테스트
+│   │   └── userUtils.ts                   # 사용자 유틸리티
+│   │
+│   ├── styles/                            # 스타일 관련 파일
+│   ├── assets/                            # 이미지, 폰트 등 정적 자원
+│   ├── mocks/                             # 테스트용 목 데이터
+│   ├── config/                            # 설정 파일들
+│   └── constants/                         # 상수 정의
+│
+├── backend/                               # Spring Boot 백엔드
+│   └── src/main/java/com/chimaenono/dearmind/
+│       ├── DearmindApplication.java       # Spring Boot 메인 클래스
+│       │
+│       ├── album/                         # 앨범 관리
+│       │   ├── AlbumController.java
+│       │   ├── AlbumPhoto.java
+│       │   └── AlbumComment.java
+│       │
+│       ├── camera/                        # 카메라 기능
+│       │   ├── CameraController.java
+│       │   └── CameraService.java
+│       │
+│       ├── config/                        # 설정 클래스
+│       │   ├── SecurityConfig.java
+│       │   ├── JwtConfig.java
+│       │   ├── WebSocketConfig.java
+│       │   └── SwaggerConfig.java
+│       │
+│       ├── conversation/                  # 대화 관리
+│       │   ├── ConversationController.java
+│       │   ├── ConversationService.java
+│       │   └── EmotionFlowService.java
+│       │
+│       ├── ConversationMessage/           # 대화 메시지
+│       │   ├── ConversationMessageController.java
+│       │   └── ConversationMessageService.java
+│       │
+│       ├── diary/                         # 일기 기능
+│       │   ├── DiaryPlan.java
+│       │   └── EmotionFlow.java
+│       │
+│       ├── gpt/                           # GPT AI 서비스
+│       │   ├── GPTController.java
+│       │   └── GPTService.java
+│       │
+│       ├── guardian/                      # 보호자 기능
+│       │   └── GuardianSeniorRelationship.java
+│       │
+│       ├── microphone/                    # 마이크 기능
+│       │   ├── MicrophoneController.java
+│       │   └── MicrophoneService.java
+│       │
+│       ├── music/                         # 음악 추천
+│       │   ├── MusicRecommendation.java
+│       │   └── YouTubeSearchService.java
+│       │
+│       ├── notification/                  # 알림 기능
+│       │   ├── NotificationController.java
+│       │   └── NotificationWebSocketHandler.java
+│       │
+│       ├── question/                      # 질문 관리
+│       │   └── QuestionController.java
+│       │
+│       ├── s3/                            # AWS S3 파일 업로드
+│       │   ├── S3Controller.java
+│       │   └── S3Service.java
+│       │
+│       ├── stt/                           # Speech-to-Text
+│       │   ├── STTController.java
+│       │   └── STTService.java
+│       │
+│       ├── tts/                           # Text-to-Speech
+│       │   ├── TTSController.java
+│       │   └── TTSService.java
+│       │
+│       ├── user/                          # 사용자 관리
+│       │   ├── UserController.java
+│       │   ├── KakaoAuthController.java
+│       │   └── User.java
+│       │
+│       └── userEmotionAnalysis/           # 감정 분석
+│           ├── UserEmotionAnalysisController.java
+│           └── CombineEmotionService.java
+│
+├── docs/                                  # 문서
+│   ├── 01.보고서/                         # 보고서
+│   ├── 02.포스터/                         # 포스터
+│   └── 03.발표자료/                       # 발표자료
+│
+├── install_and_build.sh                  # 설치 스크립트
+├── README.md                              # 프로젝트 설명서
+└── SAMPLE_README.md                       # README 샘플
 ```
 
-```
-frontend/
-├── App.tsx                          # 앱 진입점
-│
-├── components/                      # 재사용 가능한 UI 컴포넌트
-│   ├── AICharacter.tsx              # AI 캐릭터 컴포넌트
-│   ├── AlbumCard.tsx                # 앨범 카드
-│   ├── AlbumHero.tsx                # 앨범 히어로 섹션
-│   ├── AlbumView.tsx                # 앨범 뷰어
-│   ├── ChatBallon.tsx               # 채팅 말풍선
-│   ├── ConversationFlow.tsx         # 대화 플로우
-│   ├── AnswerMic.tsx                # 음성 답변 버튼
-│   └── ...                          # 기타 UI 컴포넌트들
-│
-├── screens/                         # 화면 컴포넌트
-│   ├── Home.tsx                     # 메인 홈 화면
-│   ├── Chat.tsx                     # 채팅 화면
-│   ├── Conversation.tsx             # 대화 화면
-│   ├── Album.tsx                    # 앨범 목록
-│   ├── AlbumDetail.tsx              # 앨범 상세
-│   ├── Login.tsx                    # 로그인 화면
-│   ├── GuardianMain.tsx             # 보호자 메인
-│   ├── DiaryResult.tsx              # 일기 결과
-│   └── ...                          # 기타 화면들
-│
-├── services/                        # 비즈니스 로직 서비스
-│   ├── api/                         # API 통신
-│   ├── audio/                       # 오디오 처리
-│   ├── cameraService.ts             # 카메라 서비스
-│   ├── conversationService.ts       # 대화 관리
-│   ├── diaryService.ts              # 일기 기능
-│   ├── emotionService.ts            # 감정 분석
-│   ├── faceDetectionService.ts      # 얼굴 감지
-│   ├── faceRecognitionService.ts    # 얼굴 인식
-│   ├── kakaoAuthService.ts          # 카카오 인증
-│   ├── guardianService.ts           # 보호자 기능
-│   └── ...                          # 기타 서비스들
-│
-├── contexts/                        # React Context 상태 관리
-│   ├── UserContext.tsx              # 사용자 상태
-│   ├── ConversationContext.tsx      # 대화 상태
-│   ├── DiaryContext.tsx             # 일기 상태
-│
-├── hooks/                           # 커스텀 훅
-│   ├── useConversation.ts           # 대화 관련 훅
-│   ├── useCameraTest.ts             # 카메라 테스트
-│   ├── useMicrophoneTest.ts         # 마이크 테스트
-│   └── ...                          # 기타 커스텀 훅들
-│
-├── types/                           # TypeScript 타입 정의│
-├── utils/                           # 유틸리티 함수
-│   ├── cameraUtils.ts               # 카메라 유틸리티
-│   ├── conversationUtils.ts         # 대화 유틸리티
-│   ├── microphoneTestUtils.ts       # 마이크 테스트
-│   └── userUtils.ts                 # 사용자 유틸리티
-│
-├── styles/                          # 스타일 관련 파일
-├── assets/                          # 이미지, 폰트 등 정적 자원
-├── mocks/                           # 테스트용 목 데이터
-├── config/                          # 설정 파일들
-├── constants/                       # 상수 정의
-```
+### 4.4. 모델 파일 다운로드
 
-```
-backend/
-├── src/main/java/com/chimaenono/dearmind/
-│   ├── DearmindApplication.java          # Spring Boot 메인 클래스
-│   │
-│   ├── album/                            # 앨범 관리
-│   │   ├── AlbumController.java
-│   │   ├── AlbumPhoto.java
-│   │   └── AlbumComment.java
-│   │
-│   ├── camera/                           # 카메라 기능
-│   │   ├── CameraController.java
-│   │   └── CameraService.java
-│   │
-│   ├── config/                           # 설정 클래스
-│   │   ├── SecurityConfig.java
-│   │   ├── JwtConfig.java
-│   │   ├── WebSocketConfig.java
-│   │   └── SwaggerConfig.java
-│   │
-│   ├── conversation/                     # 대화 관리
-│   │   ├── ConversationController.java
-│   │   ├── ConversationService.java
-│   │   └── EmotionFlowService.java
-│   │
-│   ├── ConversationMessage/              # 대화 메시지
-│   │   ├── ConversationMessageController.java
-│   │   └── ConversationMessageService.java
-│   │
-│   ├── diary/                            # 일기 기능
-│   │   ├── DiaryPlan.java
-│   │   └── EmotionFlow.java
-│   │
-│   ├── gpt/                              # GPT AI 서비스
-│   │   ├── GPTController.java
-│   │   └── GPTService.java
-│   │
-│   ├── guardian/                         # 보호자 기능
-│   │   └── GuardianSeniorRelationship.java
-│   │
-│   ├── microphone/                       # 마이크 기능
-│   │   ├── MicrophoneController.java
-│   │   └── MicrophoneService.java
-│   │
-│   ├── music/                            # 음악 추천
-│   │   ├── MusicRecommendation.java
-│   │   └── YouTubeSearchService.java
-│   │
-│   ├── notification/                     # 알림 기능
-│   │   ├── NotificationController.java
-│   │   └── NotificationWebSocketHandler.java
-│   │
-│   ├── question/                         # 질문 관리
-│   │   └── QuestionController.java
-│   │
-│   ├── s3/                               # AWS S3 파일 업로드
-│   │   ├── S3Controller.java
-│   │   └── S3Service.java
-│   │
-│   ├── stt/                              # Speech-to-Text
-│   │   ├── STTController.java
-│   │   └── STTService.java
-│   │
-│   ├── tts/                              # Text-to-Speech
-│   │   ├── TTSController.java
-│   │   └── TTSService.java
-│   │
-│   ├── user/                             # 사용자 관리
-│   │   ├── UserController.java
-│   │   ├── KakaoAuthController.java
-│   │   └── User.java
-│   │
-│   └── userEmotionAnalysis/              # 감정 분석
-│       ├── UserEmotionAnalysisController.java
-│       └── CombineEmotionService.java
-```
+GitHub 파일 크기 제한으로 인해 학습된 모델 파일들은 별도로 다운로드해야 합니다.
+
+**다운로드 링크:**
+- [Google Drive - AI 모델 파일](https://drive.google.com/drive/folders/YOUR_FOLDER_ID)
+
+**다운로드 후 설치 방법:**
+
+1. **KLUE-BERT 모델**
+   ```bash
+   # Google Drive에서 다운로드한 ctx_best.pt 파일을 다음 경로에 저장
+   # ctx_best.pt 파일을 ai/klue-bert/ 디렉토리에 복사
+   ```
+
+2. **YOLO 모델**
+   ```bash
+   # Google Drive에서 다운로드한 모델 파일들을 다음 경로에 저장
+   # best1.pt, best2.pt 파일들을 ai/yolo/ 디렉토리에 복사
+   ```
+
+**모델 파일 목록:**
+- `ctx_best.pt` (422MB) - KLUE-BERT 텍스트 감정 분석 모델
+- `best1.pt` - YOLO 1차 모델 (joy/angry/sad/hurt/complex 감정)
+- `best2.pt` - YOLO 2차 모델 (embarrassed/anxious 감정)
 
 ## 5. 설치 및 실행 방법
 
@@ -268,7 +298,7 @@ backend/
 
 ```bash
 git clone <repository-url>
-cd dearmind_fe_final
+cd Capstone-2025-team-21
 ```
 
 **2. 데이터베이스 설정**
@@ -309,6 +339,9 @@ cd backend
 ```bash
 cd ai/klue-bert
 
+# 모델 파일 다운로드 (Google Drive에서)
+# ctx_best.pt 파일을 ai/klue-bert/ 디렉토리에 저장
+
 # 가상환경 생성 및 활성화
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
@@ -326,6 +359,9 @@ python main.py
 
 ```bash
 cd ai/yolo
+
+# 모델 파일 다운로드 (Google Drive에서)
+# best1.pt, best2.pt 파일들을 ai/yolo/ 디렉토리에 저장
 
 # 가상환경 생성 및 활성화
 python -m venv venv
@@ -429,15 +465,19 @@ curl http://localhost:8001/health
 
 ### 5.2. 오류 발생 시 해결 방법
 
-### 일반적인 문제
+#### 일반적인 문제
 - **포트 충돌**: `netstat -ano | findstr :8080`으로 확인 후 `taskkill /PID <PID> /F`로 종료
 - **의존성 오류**: Node.js 18+, Python 3.9+, Java 17+ 버전 확인 후 `npm ci`, `./gradlew clean build`, `pip install -r requirements.txt` 재실행
 - **데이터베이스 연결**: MySQL 서비스 실행 확인 (`net start mysql80` 또는 `brew services start mysql`)
 
-### 오류 발생 시 해결 방법
+#### AI 서비스 관련 문제
+- **모델 파일 없음**: Google Drive에서 모델 파일을 다운로드하여 `ai/klue-bert/`, `ai/yolo/` 디렉토리에 저장
+- **메모리 부족**: `export CUDA_VISIBLE_DEVICES=""`로 CPU 모드 실행
+- **모델 로딩 실패**: 모델 파일 경로와 권한 확인
+
+#### 기타 오류
 - **Backend**: `application-local.yml`에서 데이터베이스, S3, 카카오 API 설정 확인
 - **Frontend**: `.env` 파일의 API URL 설정 확인, `npx expo start --clear`로 캐시 클리어
-- **AI 서비스**: 모델 파일 존재 확인, 메모리 부족 시 `export CUDA_VISIBLE_DEVICES=""`로 CPU 모드 실행
 
 ## 6. 소개 자료 및 시연 영상
 
