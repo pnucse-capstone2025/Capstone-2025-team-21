@@ -100,7 +100,7 @@ Capstone-2025-team-21/
 │       ├── best1.pt                       # 모델 파일 (다운로드 필요)
 │       └── best2.pt                       # 모델 파일 (다운로드 필요)
 │
-├── frontend_mobile/                       # React Native 프론트엔드
+├── frontend/                       # React Native 프론트엔드
 │   ├── App.tsx                            # 앱 진입점
 │   ├── components/                        # 재사용 가능한 UI 컴포넌트
 │   │   ├── AICharacter.tsx                # AI 캐릭터 컴포넌트
@@ -243,7 +243,7 @@ Capstone-2025-team-21/
 GitHub 파일 크기 제한으로 인해 학습된 모델 파일들은 별도로 다운로드해야 합니다.
 
 **다운로드 링크:**
-- [Google Drive - AI 모델 파일](https://drive.google.com/drive/folders/YOUR_FOLDER_ID)
+- [Google Drive - AI 모델 파일](https://drive.google.com/drive/folders/1UBl7Lq0_RZshQiP2jYFU5TJofUVLLfX9?usp=drive_link)
 
 **다운로드 후 설치 방법:**
 
@@ -260,17 +260,25 @@ GitHub 파일 크기 제한으로 인해 학습된 모델 파일들은 별도로
    ```
 
 **모델 파일 목록:**
-- `ctx_best.pt` (422MB) - KLUE-BERT 텍스트 감정 분석 모델
+- `ctx_best.pt` - KLUE-BERT 텍스트 감정 분석 모델
 - `best1.pt` - YOLO 1차 모델 (joy/angry/sad/hurt/complex 감정)
 - `best2.pt` - YOLO 2차 모델 (embarrassed/anxious 감정)
 
 ## 5. 설치 및 실행 방법
 
-### 배포 사이트 : https://seniordigitalalbum.github.io
+### 5.1. 배포된 서비스 이용
 
-### 5.1. 설치절차 및 실행 방법
+**배포 사이트**: [https://seniordigitalalbum.github.io/frontend_mobile/](https://seniordigitalalbum.github.io/frontend_mobile/)
 
-#### 사전 요구사항
+배포된 서비스는 모델 파일이 이미 설정되어 있어 별도 다운로드 없이 바로 이용할 수 있습니다.
+
+### 5.2. 로컬 설치 및 실행 방법
+
+로컬에서 개발하거나 테스트하려면 다음 두 가지 방법 중 선택할 수 있습니다.
+
+#### 방법 1: AI 서비스도 로컬에서 실행 (모델 파일 다운로드 필요)
+
+**사전 요구사항**
 
 **공통 요구사항**
 - **Node.js** 18.x 이상
@@ -285,13 +293,35 @@ GitHub 파일 크기 제한으로 인해 학습된 모델 파일들은 별도로
 - **OpenAI API 키** (GPT 서비스용)
 - **Google Cloud 계정** (STT/TTS 서비스용)
 
-#### 로컬 설치 및 실행 방법
+**중요**: 이 방법은 AI 모델 파일을 별도로 다운로드해야 합니다.
 
-**1. 저장소 클론**
+#### 방법 2: AI 서비스는 배포된 주소 사용 (모델 파일 다운로드 불필요)
+
+**사전 요구사항**
+- **Node.js** 18.x 이상
+- **Java** 17 이상
+- **MySQL** 8.0 이상
+
+**추가 요구사항**
+- **AWS S3** 계정 (파일 저장용)
+- **카카오 개발자 계정** (소셜 로그인용)
+- **OpenAI API 키** (GPT 서비스용)
+- **Google Cloud 계정** (STT/TTS 서비스용)
+
+**장점**: AI 모델 파일 다운로드 없이 빠르게 시작할 수 있습니다.
+
+**방법 1: AI 서비스도 로컬에서 실행**
+
+**1. 저장소 클론 및 모델 파일 다운로드**
 
 ```bash
 git clone <repository-url>
 cd Capstone-2025-team-21
+
+# AI 모델 파일 다운로드 (필수)
+# Google Drive에서 모델 파일들을 다운로드하여 다음 경로에 저장:
+# - ctx_best.pt → ai/klue-bert/
+# - best1.pt, best2.pt → ai/yolo/
 ```
 
 **2. 데이터베이스 설정**
@@ -332,9 +362,6 @@ cd backend
 ```bash
 cd ai/klue-bert
 
-# 모델 파일 다운로드 (Google Drive에서)
-# ctx_best.pt 파일을 ai/klue-bert/ 디렉토리에 저장
-
 # 가상환경 생성 및 활성화
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
@@ -342,7 +369,7 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 # 의존성 설치
 pip install -r requirements.txt
 
-# 서비스 실행
+# 서비스 실행 (ctx_best.pt 파일이 같은 디렉토리에 있어야 함)
 python main.py
 ```
 
@@ -353,9 +380,6 @@ python main.py
 ```bash
 cd ai/yolo
 
-# 모델 파일 다운로드 (Google Drive에서)
-# best1.pt, best2.pt 파일들을 ai/yolo/ 디렉토리에 저장
-
 # 가상환경 생성 및 활성화
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
@@ -363,7 +387,7 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 # 의존성 설치
 pip install -r requirements.txt
 
-# 서비스 실행
+# 서비스 실행 (best1.pt, best2.pt 파일이 같은 디렉토리에 있어야 함)
 python main.py
 ```
 
@@ -372,7 +396,7 @@ python main.py
 **5. Frontend 설정 및 실행**
 
 ```bash
-cd frontend_mobile
+cd frontend
 
 # 의존성 설치
 npm install
@@ -386,6 +410,71 @@ npx expo start
 
 **Frontend 앱**: `http://localhost:8081`
 **Frontend 웹**: `http://localhost:8082`
+
+---
+
+**방법 2: AI 서비스는 배포된 주소 사용**
+
+**1. 저장소 클론**
+
+```bash
+git clone <repository-url>
+cd Capstone-2025-team-21
+```
+
+**2. 데이터베이스 설정**
+
+```bash
+# MySQL 데이터베이스 생성
+mysql -u root -p
+CREATE DATABASE dearmind;
+```
+
+**3. Backend 설정 및 실행**
+
+```bash
+cd backend
+
+# Gradle 빌드
+./gradlew build
+
+# 환경 변수 설정 (application-local.yml 수정)
+# - MySQL 연결 정보
+# - AWS S3 설정
+# - 카카오 REST API 키
+# - OpenAI API 키
+# - Google Cloud 인증서
+
+# 애플리케이션 실행
+./gradlew bootRun
+```
+
+**Backend 서버**: `http://localhost:8080`
+
+**4. Frontend 설정 및 실행**
+
+```bash
+cd frontend
+
+# 의존성 설치
+npm install
+
+# 환경 변수 설정 (.env 파일 생성)
+echo "API_BASE_URL=http://localhost:8080" > .env
+echo "KLUE_BERT_API_URL=http://35.202.26.247:8001" >> .env
+echo "YOLO_API_URL=http://35.202.26.247:8000" >> .env
+
+# 웹 개발 서버 실행
+npx expo start --web
+
+# 모바일 EXPO GO 실행
+npx expo start
+```
+
+**Frontend 앱**: `http://localhost:8081`
+**Frontend 웹**: `http://localhost:8082`
+
+**참고**: AI 서비스 배포 URL은 실제 배포된 주소로 변경해주세요.
 
 #### Docker를 이용한 실행 (선택사항)
 
@@ -474,7 +563,7 @@ curl http://localhost:8001/health
 
 ## 6. 소개 자료 및 시연 영상
 
-### 6.1. 프로젝트 소개 자료**Frontend 앱**: `http://localhost:8081`
+### 6.1. 프로젝트 소개 자료
 
 - [프로젝트 발표 PPT 링크]()
 
