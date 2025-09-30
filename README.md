@@ -290,7 +290,9 @@ cd backend
 # 환경 변수 설정 (application-local.yml 수정)
 # - MySQL 연결 정보
 # - AWS S3 설정
-# - 카카오 API 키
+# - 카카오 REST API 키
+## 이 때 모바일 환경 로그인을 위하여 redirect_url을 http://<현재 LAN의 IP 주소>:8080/api/auth/kakao/callback로 설정해주어야 합니다.
+## 카카오 개발자 콘솔에서도 해당 redirect_url을 등록합니다.
 # - OpenAI API 키
 # - Google Cloud 인증서
 
@@ -439,7 +441,7 @@ curl http://localhost:8001/health
 
 ## 6. 소개 자료 및 시연 영상
 
-### 6.1. 프로젝트 소개 자료
+### 6.1. 프로젝트 소개 자료**Frontend 앱**: `http://localhost:8081`
 
 - [프로젝트 발표 PPT 링크]()
 
