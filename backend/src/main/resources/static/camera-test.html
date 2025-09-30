@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLO 감정 분석 테스트</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .section h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .camera-preview {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 20px 0;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-inactive {
+            background-color: #dc3545;
+        }
+        .status-recording {
+            background-color: #ffc107;
+        }
+        .emotion-result {
+            background-color: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            color: #0066cc;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .emotion-result strong {
+            color: #004499;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>😊 YOLO 감정 분석 테스트</h1>
+        
+        <!-- 카메라 프리뷰 -->
+        <div class="section">
+            <h2>📷 카메라 프리뷰</h2>
+            <div class="camera-preview" id="cameraPreview">
+                카메라가 활성화되지 않았습니다
+            </div>
+            <button onclick="startCamera()">카메라 시작</button>
+            <button onclick="stopCamera()">카메라 중지</button>
+        </div>
+
+        <!-- 실시간 감정 분석 -->
+        <div class="section">
+            <h2>😊 실시간 감정 분석 (YOLO API)</h2>
+            <div class="form-group">
+                <label for="captureInterval">캡처 간격 (초):</label>
+                <input type="number" id="captureInterval" value="3" min="1" max="10" placeholder="캡처 간격을 입력하세요">
+            </div>
+            <button onclick="startEmotionAnalysis()">감정 분석 시작</button>
+            <button onclick="stopEmotionAnalysis()">감정 분석 중지</button>
+            <div id="emotionStatus" style="margin-top: 10px;">
+                <span class="status-indicator status-inactive"></span>
+                <span>감정 분석 중지됨</span>
+            </div>
+        </div>
+
+        <!-- 감정 분석 결과 -->
+        <div class="section">
+            <h2>📊 감정 분석 결과</h2>
+            <div id="emotionResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const YOLO_API_URL = 'http://127.0.0.1:8000/predict_emotion';
+        let stream = null;
+        let emotionAnalysisInterval = null;
+        let isEmotionAnalysisActive = false;
+
+        // 카메라 시작
+        async function startCamera() {
+            try {
+                // 카메라 접근 전 상태 확인
+                console.log('카메라 접근 시도 중...');
+                
+                // 미디어 디바이스 지원 확인
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('이 브라우저는 카메라 접근을 지원하지 않습니다.');
+                }
+                
+                // 권한 상태 확인 (가능한 경우)
+                if (navigator.permissions) {
+                    try {
+                        const permissionStatus = await navigator.permissions.query({ name: 'camera' });
+                        console.log('카메라 권한 상태:', permissionStatus.state);
+                        if (permissionStatus.state === 'denied') {
+                            throw new Error('카메라 권한이 거부되었습니다. 브라우저 설정에서 권한을 허용해주세요.');
+                        }
+                    } catch (permError) {
+                        console.log('권한 상태 확인 실패 (일부 브라우저에서 지원하지 않음):', permError);
+                    }
+                }
+                
+                // 사용 가능한 카메라 확인
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                console.log('사용 가능한 카메라:', videoDevices);
+                
+                if (videoDevices.length === 0) {
+                    throw new Error('사용 가능한 카메라가 없습니다.');
+                }
+                
+                // 카메라 접근 요청
+                console.log('getUserMedia 호출 시작...');
+                
+                // 먼저 간단한 설정으로 시도
+                try {
+                    console.log('간단한 설정으로 getUserMedia 시도 중...');
+                    
+                    // 타임아웃 추가 (10초)
+                    const timeoutPromise = new Promise((_, reject) => {
+                        setTimeout(() => reject(new Error('getUserMedia 타임아웃 (10초)')), 10000);
+                    });
+                    
+                    const getUserMediaPromise = navigator.mediaDevices.getUserMedia({ 
+                        video: true, 
+                        audio: false 
+                    });
+                    
+                    stream = await Promise.race([getUserMediaPromise, timeoutPromise]);
+                    console.log('getUserMedia 성공! (간단한 설정)', stream);
+                } catch (simpleError) {
+                    console.error('간단한 설정 실패:', simpleError);
+                    console.log('오류 이름:', simpleError.name);
+                    console.log('오류 메시지:', simpleError.message);
+                    
+                    // 상세 설정으로 재시도
+                    try {
+                        console.log('상세 설정으로 getUserMedia 재시도 중...');
+                        stream = await navigator.mediaDevices.getUserMedia({ 
+                            video: { 
+                                width: { ideal: 640 },
+                                height: { ideal: 480 },
+                                facingMode: 'user'
+                            }, 
+                            audio: false 
+                        });
+                        console.log('getUserMedia 성공! (상세 설정)', stream);
+                    } catch (detailedError) {
+                        console.error('상세 설정도 실패:', detailedError);
+                        console.log('상세 오류 이름:', detailedError.name);
+                        console.log('상세 오류 메시지:', detailedError.message);
+                        throw detailedError;
+                    }
+                }
+                
+                console.log('비디오 엘리먼트 생성 중...');
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.autoplay = true;
+                video.playsInline = true;
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'cover';
+                video.style.borderRadius = '8px';
+                
+                console.log('비디오 이벤트 리스너 추가...');
+                video.addEventListener('loadedmetadata', () => {
+                    console.log('비디오 메타데이터 로드됨');
+                });
+                
+                video.addEventListener('canplay', () => {
+                    console.log('비디오 재생 가능');
+                });
+                
+                video.addEventListener('error', (e) => {
+                    console.error('비디오 오류:', e);
+                });
+                
+                console.log('프리뷰 영역에 비디오 추가 중...');
+                const preview = document.getElementById('cameraPreview');
+                preview.innerHTML = '';
+                preview.appendChild(video);
+                console.log('비디오 추가 완료');
+                
+                // 카메라 시작 버튼 비활성화, 중지 버튼 활성화
+                document.querySelector('button[onclick="startCamera()"]').disabled = true;
+                document.querySelector('button[onclick="stopCamera()"]').disabled = false;
+                
+                console.log('카메라가 성공적으로 시작되었습니다.');
+                alert('카메라가 성공적으로 시작되었습니다!');
+                
+            } catch (error) {
+                console.error('카메라 접근 실패:', error);
+                
+                let errorMessage = '카메라 접근에 실패했습니다.\n\n';
+                
+                if (error.name === 'NotAllowedError') {
+                    errorMessage += '카메라 권한이 거부되었습니다.\n브라우저 설정에서 카메라 권한을 허용해주세요.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMessage += '카메라를 찾을 수 없습니다.\n카메라가 연결되어 있는지 확인해주세요.';
+                } else if (error.name === 'NotReadableError') {
+                    errorMessage += '카메라가 다른 앱에서 사용 중입니다.\n다른 앱을 종료하고 다시 시도해주세요.';
+                } else {
+                    errorMessage += '오류: ' + error.message;
+                }
+                
+                alert(errorMessage);
+            }
+        }
+
+        // 카메라 중지
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            const preview = document.getElementById('cameraPreview');
+            preview.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">카메라가 중지되었습니다.</p>';
+            
+            // 버튼 상태 복원
+            document.querySelector('button[onclick="startCamera()"]').disabled = false;
+            document.querySelector('button[onclick="stopCamera()"]').disabled = true;
+            
+            // 감정 분석도 중지
+            stopEmotionAnalysis();
+            
+            console.log('카메라가 중지되었습니다.');
+            alert('카메라가 중지되었습니다.');
+        }
+
+        // 감정 분석 시작
+        function startEmotionAnalysis() {
+            if (!stream) {
+                alert('먼저 카메라를 시작해주세요.');
+                return;
+            }
+
+            if (isEmotionAnalysisActive) {
+                alert('감정 분석이 이미 실행 중입니다.');
+                return;
+            }
+
+            const interval = parseInt(document.getElementById('captureInterval').value) * 1000;
+            
+            isEmotionAnalysisActive = true;
+            updateEmotionStatus(true);
+            
+            // 결과 영역 초기화
+            document.getElementById('emotionResults').innerHTML = '';
+            
+            // 즉시 첫 번째 분석 실행
+            captureAndAnalyze();
+            
+            // 주기적으로 분석 실행
+            emotionAnalysisInterval = setInterval(captureAndAnalyze, interval);
+            
+            console.log(`감정 분석이 시작되었습니다. (${interval/1000}초 간격)`);
+        }
+
+        // 감정 분석 중지
+        function stopEmotionAnalysis() {
+            if (emotionAnalysisInterval) {
+                clearInterval(emotionAnalysisInterval);
+                emotionAnalysisInterval = null;
+            }
+            
+            isEmotionAnalysisActive = false;
+            updateEmotionStatus(false);
+            
+            console.log('감정 분석이 중지되었습니다.');
+        }
+
+        // 사진 캡처 및 감정 분석
+        async function captureAndAnalyze() {
+            if (!stream || !isEmotionAnalysisActive) {
+                return;
+            }
+
+            try {
+                // 비디오에서 캔버스로 프레임 캡처
+                const video = document.querySelector('#cameraPreview video');
+                if (!video) {
+                    console.error('비디오 요소를 찾을 수 없습니다.');
+                    return;
+                }
+
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // 캔버스를 Blob으로 변환
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, 'image/jpeg', 0.8);
+                });
+
+                // FormData 생성
+                const formData = new FormData();
+                formData.append('file', blob, 'capture.jpg');
+
+                // YOLO API 호출
+                const response = await fetch(YOLO_API_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                // 결과 표시
+                const timestamp = new Date().toLocaleTimeString();
+                displayEmotionResult(timestamp, result);
+                
+                console.log('감정 분석 결과:', result);
+                
+            } catch (error) {
+                console.error('감정 분석 오류:', error);
+                const timestamp = new Date().toLocaleTimeString();
+                displayEmotionError(timestamp, error.message);
+            }
+        }
+
+        // 감정 분석 상태 업데이트
+        function updateEmotionStatus(isActive) {
+            const statusElement = document.getElementById('emotionStatus');
+            const indicator = statusElement.querySelector('.status-indicator');
+            const text = statusElement.querySelector('span:last-child');
+            
+            if (isActive) {
+                indicator.className = 'status-indicator status-recording';
+                text.textContent = '감정 분석 실행 중...';
+            } else {
+                indicator.className = 'status-indicator status-inactive';
+                text.textContent = '감정 분석 중지됨';
+            }
+        }
+
+        // 감정 분석 결과 표시
+        function displayEmotionResult(timestamp, result) {
+            const resultsContainer = document.getElementById('emotionResults');
+            
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'emotion-result';
+            
+            const confidencePercent = Math.round(result.confidence * 100);
+            
+            resultDiv.innerHTML = `
+                <div><strong>시간:</strong> ${timestamp}</div>
+                <div><strong>감정:</strong> ${result.emotion}</div>
+                <div><strong>신뢰도:</strong> ${confidencePercent}%</div>
+                <div><strong>바운딩 박스:</strong> [${result.bounding_box.join(', ')}]</div>
+            `;
+            
+            // 최신 결과를 맨 위에 추가
+            resultsContainer.insertBefore(resultDiv, resultsContainer.firstChild);
+            
+            // 최대 10개 결과만 유지
+            while (resultsContainer.children.length > 10) {
+                resultsContainer.removeChild(resultsContainer.lastChild);
+            }
+        }
+
+        // 감정 분석 에러 표시
+        function displayEmotionError(timestamp, errorMessage) {
+            const resultsContainer = document.getElementById('emotionResults');
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'emotion-result error';
+            
+            errorDiv.innerHTML = `
+                <div><strong>시간:</strong> ${timestamp}</div>
+                <div><strong>에러:</strong> ${errorMessage}</div>
+            `;
+            
+            // 최신 에러를 맨 위에 추가
+            resultsContainer.insertBefore(errorDiv, resultsContainer.firstChild);
+            
+            // 최대 10개 결과만 유지
+            while (resultsContainer.children.length > 10) {
+                resultsContainer.removeChild(resultsContainer.lastChild);
+            }
+        }
+    </script>
+</body>
+</html> 

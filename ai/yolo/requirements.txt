@@ -1,0 +1,11 @@
+# FastAPI and ASGI server
+fastapi
+uvicorn
+
+# YOLO model related
+ultralytics
+opencv-python-headless
+Pillow
+
+# Others
+python-multipart
