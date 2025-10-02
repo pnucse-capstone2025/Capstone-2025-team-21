@@ -64,7 +64,7 @@
 
 1. **대화 시작:** 사용자가 메인 화면에서 질문을 선택하면 AI와의 대화 세션이 시작된다.
 2. **사용자 발화 및 인식:** 사용자가 마이크에 대고 답변하면, 음성은 STT(Speech-to-Text)로 변환되고, 동시에 카메라는 사용자의 표정을 주기적으로 캡처한다.
-3. **멀티모달 감정 분석:** 변환된 텍스트와 캡처된 표정 이미지는 각각 KLUE-BERT와 YOLOv8 모델로 전송되어 감정 확률 분포를 얻는다. 두 결과는 가중 합산(Late Fusion)을 통해 하나의 통합된 감정으로 결론 내려진다.
+3. **멀티모달 감정 분석:** 변환된 텍스트와 캡처된 표정 이미지는 각각 fine-tuning된 KLUE-BERT와 YOLOv8 모델로 전송되어 감정 확률 분포를 얻는다. 두 결과는 가중 합산(Late Fusion)을 통해 하나의 통합된 감정으로 결론 내려진다.
 4. **AI 응답 생성:** 분석된 감정과 대화 맥락을 기반으로 GPT 모델이 회상 요법에 맞는 다음 질문이나 공감 표현을 생성하고, 이는 TTS(Text-to-Speech)를 통해 음성으로 사용자에게 전달된다.
 5. **대화 종료 및 후처리:** 대화가 종료되면, 전체 대화 내용과 감정 흐름 분석 결과가 백그라운드에서 비동기적으로 처리된다.
 6. **앨범 생성 및 공유:** GPT 모델이 대화를 요약하고 감정 흐름을 반영하여 최종 일기를 생성한다. 이 일기는 음악, 표지와 함께 앨범 형태로 저장되며 사용자는 이를 가족과 공유할 수 있다.
@@ -83,6 +83,7 @@
   - **입력:** 가족 사용자의 시니어 전화번호 입력, 시니어의 연결 수락, 가족의 사진/댓글 업로드.
   - **처리:** 다대다(N:M) 관계로 시니어와 가족 계정 연결. 공유된 앨범에 대한 CRUD(생성, 읽기, 수정, 삭제) 기능 수행.
   - **출력:** 연결된 가족에게 공유 앨범 표시, 앨범 내 사진 및 댓글 목록 표시.
+
 
 ### 4.3. 디렉토리 구조
 
@@ -243,7 +244,34 @@ Capstone-2025-team-21/
 └──
 ```
 
-### 4.4. 모델 파일 다운로드
+## 5. 설치 및 실행 방법
+
+### 5.1. 배포된 서비스 이용
+
+**배포 사이트**: [https://seniordigitalalbum.github.io/frontend_mobile/](https://seniordigitalalbum.github.io/frontend_mobile/)
+
+배포된 서비스는 모델 서버, 백엔드 서버, 데이터베이스 서버가 이미 설정되어 있어 아래 과정이 불필요 합니다.
+
+### 5.2. 로컬 설치 및 실행 방법
+
+**공통 요구사항**
+- **Node.js** 18.x 이상
+- **Python** 3.9 이상
+- **Java** 17 이상
+- **MySQL** 8.0 이상
+- **Docker** (선택사항)
+
+**추가 요구사항**
+- **AWS S3** 계정 (파일 저장용)
+- **카카오 개발자 계정** (소셜 로그인용)
+- **OpenAI API 키** (GPT 서비스용)
+- **Google Cloud 계정** (STT/TTS 서비스용)
+
+로컬에서 개발하거나 테스트하려면 다음 두 가지 방법 중 선택할 수 있습니다.
+
+#### 방법 1: AI 서비스도 로컬에서 실행 (모델 파일 다운로드 필요)
+
+**0. 모델 파일 다운로드**
 
 GitHub 파일 크기 제한으로 인해 학습된 모델 파일들은 별도로 다운로드해야 합니다.
 
@@ -269,55 +297,7 @@ GitHub 파일 크기 제한으로 인해 학습된 모델 파일들은 별도로
 - `best1.pt` - YOLO 1차 모델 (joy/angry/sad/hurt/complex 감정)
 - `best2.pt` - YOLO 2차 모델 (embarrassed/anxious 감정)
 
-## 5. 설치 및 실행 방법
-
-### 5.1. 배포된 서비스 이용
-
-**배포 사이트**: [https://seniordigitalalbum.github.io/frontend_mobile/](https://seniordigitalalbum.github.io/frontend_mobile/)
-
-배포된 서비스는 모델 서버, 백엔드 서버, 데이터베이스 서버가 이미 설정되어 있어 아래 과정이 불필요 합니다.
-
-### 5.2. 로컬 설치 및 실행 방법
-
-로컬에서 개발하거나 테스트하려면 다음 두 가지 방법 중 선택할 수 있습니다.
-
-#### 방법 1: AI 서비스도 로컬에서 실행 (모델 파일 다운로드 필요)
-
-**사전 요구사항**
-
-**공통 요구사항**
-- **Node.js** 18.x 이상
-- **Python** 3.9 이상
-- **Java** 17 이상
-- **MySQL** 8.0 이상
-- **Docker** (선택사항)
-
-**추가 요구사항**
-- **AWS S3** 계정 (파일 저장용)
-- **카카오 개발자 계정** (소셜 로그인용)
-- **OpenAI API 키** (GPT 서비스용)
-- **Google Cloud 계정** (STT/TTS 서비스용)
-
-**중요**: 이 방법은 AI 모델 파일을 별도로 다운로드해야 합니다.
-
-#### 방법 2: AI 서비스는 배포된 주소 사용 (모델 파일 다운로드 불필요)
-
-**사전 요구사항**
-- **Node.js** 18.x 이상
-- **Java** 17 이상
-- **MySQL** 8.0 이상
-
-**추가 요구사항**
-- **AWS S3** 계정 (파일 저장용)
-- **카카오 개발자 계정** (소셜 로그인용)
-- **OpenAI API 키** (GPT 서비스용)
-- **Google Cloud 계정** (STT/TTS 서비스용)
-
-**장점**: AI 모델 파일 다운로드 없이 빠르게 시작할 수 있습니다.
-
-**방법 1: AI 서비스도 로컬에서 실행**
-
-**1. 저장소 클론 및 모델 파일 다운로드**
+**1. 저장소 클론 및 모델 파일 저장**
 
 ```bash
 git clone <repository-url>
@@ -349,7 +329,7 @@ cd backend
 # - MySQL 연결 정보
 # - AWS S3 설정
 # - 카카오 REST API 키
-## 이 때 모바일 환경 로그인을 위하여 redirect_url을 http://<현재 LAN의 IP 주소>:8080/api/auth/kakao/callback로 설정해주어야 합니다.
+## 이 때 모바일 환경(expo go) 로그인을 위하여 redirect_url을 http://<현재 LAN의 IP 주소>:8080/api/auth/kakao/callback로 설정해주어야 합니다.
 ## 카카오 개발자 콘솔에서도 해당 redirect_url을 등록합니다.
 # - OpenAI API 키
 # - Google Cloud 인증서
@@ -406,6 +386,12 @@ cd frontend
 # 의존성 설치
 npm install
 
+# 환경 변수 설정 (.env 파일 생성)
+EXPO_PUBLIC_API_BASE_URL_DEV=http://<현재 LAN의 IP 주소>:8080
+EXPO_PUBLIC_API_BASE_URL_DEV_WEB=http://localhost:8080
+EXPO_PUBLIC_YOLO_EMOTION_API_URL_DEV=http://127.0.0.1:8000
+EXPO_PUBLIC_KOBERT_API_URL_DEV=http://127.0.0.1:8001
+
 # 웹 개발 서버 실행
 npx expo start --web
 
@@ -418,7 +404,8 @@ npx expo start
 
 ---
 
-**방법 2: AI 서비스는 배포된 주소 사용**
+
+#### 방법 2: AI 서비스는 배포된 주소 사용 (모델 파일 다운로드 불필요)
 
 **1. 저장소 클론**
 
@@ -447,6 +434,8 @@ cd backend
 # - MySQL 연결 정보
 # - AWS S3 설정
 # - 카카오 REST API 키
+## 이 때 모바일 환경(expo go) 로그인을 위하여 redirect_url을 http://<현재 LAN의 IP 주소>:8080/api/auth/kakao/callback로 설정해주어야 합니다.
+## 카카오 개발자 콘솔에서도 해당 redirect_url을 등록합니다.
 # - OpenAI API 키
 # - Google Cloud 인증서
 
@@ -465,9 +454,10 @@ cd frontend
 npm install
 
 # 환경 변수 설정 (.env 파일 생성)
-echo "API_BASE_URL=http://localhost:8080" > .env
-echo "KLUE_BERT_API_URL=http://35.202.26.247:8001" >> .env
-echo "YOLO_API_URL=http://35.202.26.247:8000" >> .env
+EXPO_PUBLIC_API_BASE_URL_DEV=http://<현재 LAN의 IP 주소>:8080
+EXPO_PUBLIC_API_BASE_URL_DEV_WEB=http://localhost:8080
+EXPO_PUBLIC_YOLO_EMOTION_API_URL_DEV=http://35.202.26.247:8000
+EXPO_PUBLIC_KOBERT_API_URL_DEV=http://35.202.26.247:8001
 
 # 웹 개발 서버 실행
 npx expo start --web
@@ -479,7 +469,6 @@ npx expo start
 **Frontend 앱**: `http://localhost:8081`
 **Frontend 웹**: `http://localhost:8082`
 
-**참고**: AI 서비스 배포 URL은 실제 배포된 주소로 변경해주세요.
 
 ### 5.3. Docker를 이용한 실행 (선택사항)
 
@@ -498,35 +487,6 @@ cd ai/yolo
 docker build -t dearmind-yolo .
 docker run -p 8001:8001 dearmind-yolo
 ```
-
-### 5.4. 환경 설정
-
-**Backend 환경 변수 (application-local.yml)**
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/dearmind
-    username: your_username
-    password: your_password
-
-aws:
-  s3:
-    bucket-name: your-bucket-name
-    access-key: your-access-key
-    secret-key: your-secret-key
-
-kakao:
-  client-id: your-kakao-client-id
-  client-secret: your-kakao-client-secret
-
-openai:
-  api-key: your-openai-api-key
-
-google:
-  credentials-path: path/to/google-cloud-credentials.json
-```
-
 **서비스 상태 확인**
 
 ```bash
@@ -546,7 +506,7 @@ curl http://35.202.26.247:8001/health
 curl http://35.202.26.247:8000/health
 ```
 
-### 5.5. 오류 발생 시 해결 방법
+### 5.4. 오류 발생 시 해결 방법
 
 #### 일반적인 문제
 - **포트 충돌**: `netstat -ano | findstr :8080`으로 확인 후 `taskkill /PID <PID> /F`로 종료
@@ -564,11 +524,7 @@ curl http://35.202.26.247:8000/health
 
 ## 6. 소개 자료 및 시연 영상
 
-### 6.1. 프로젝트 소개 자료
-
-- [프로젝트 발표 PPT 링크]()
-
-### 6.2. 시연 영상
+### 6.1. 시연 영상
 
 - [서비스 시연 영상 YouTube 링크](https://youtu.be/bHZ7OJzTG7E?si=DetfMMsPr-eKhrxs)
 
@@ -580,11 +536,6 @@ curl http://35.202.26.247:8000/health
 | :--- | :--- | :--- |
 | 202155514 | 김나림 | 아이디어 기획, KLUE-BERT 기반 텍스트 감정 분석 모델 구축, 프론트엔드 개발 및 배포, 로그인 및 시니어-가족 연결 기능 개발 |
 | 202155540 | 김채현 | YOLO 기반 표정 감정 분석 모델 구축 및 배포, 감정 통합 및 감정 흐름 로직 구현, LLM 구축, 백엔드 개발 및 배포, DB 구축 및 배포 |
-
-### 7.2. 팀원 별 참여 후기
-
-- **김나림:** ()
-- **김채현:** ()
 
 ## 8. 참고 문헌 및 출처
 
